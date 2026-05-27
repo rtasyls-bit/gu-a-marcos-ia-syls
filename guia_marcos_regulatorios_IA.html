@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcos Regulatorios de Inteligencia Artificial</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --nist: #1A5FA8;
+    --nist-light: #EAF2FC;
+    --nist-mid: #B5D4F4;
+    --iso: #0D6E56;
+    --iso-light: #E1F5EE;
+    --iso-mid: #9FE1CB;
+    --eu: #9A2D55;
+    --eu-light: #FBEAF0;
+    --eu-mid: #F4C0D1;
+    --purple: #4A3FAA;
+    --purple-light: #EEEDFE;
+    --ink: #1C1C1A;
+    --ink-2: #4A4A47;
+    --ink-3: #7A7A76;
+    --ink-4: #AEAEA9;
+    --surface: #FAFAF8;
+    --surface-2: #F2F1EC;
+    --border: rgba(0,0,0,0.09);
+    --border-2: rgba(0,0,0,0.06);
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--surface);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 3.5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 28px,
+      rgba(255,255,255,0.025) 28px,
+      rgba(255,255,255,0.025) 29px
+    );
+  }
+  .hero-badge {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: .75rem;
+    position: relative;
+  }
+  .hero h1 em { font-style: italic; color: rgba(255,255,255,0.6); }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+  .hero-pills {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-pill {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all .2s;
+  }
+  .hp-nist { background: var(--nist); color: #fff; }
+  .hp-iso  { background: var(--iso);  color: #fff; }
+  .hp-eu   { background: var(--eu);   color: #fff; }
+  .hp-nist:hover { opacity: .85; }
+  .hp-iso:hover  { opacity: .85; }
+  .hp-eu:hover   { opacity: .85; }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250,250,248,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-3);
+    cursor: pointer;
+    border: none;
+    background: none;
+    border-bottom: 2.5px solid transparent;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-btn:hover { color: var(--ink); }
+  .nav-btn.active { color: var(--ink); }
+  .nav-btn[data-tab="nist"].active { border-color: var(--nist); color: var(--nist); }
+  .nav-btn[data-tab="iso"].active  { border-color: var(--iso);  color: var(--iso);  }
+  .nav-btn[data-tab="eu"].active   { border-color: var(--eu);   color: var(--eu);   }
+  .nav-btn[data-tab="comp"].active { border-color: var(--purple); color: var(--purple); }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 2.5rem 2rem; max-width: 860px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* ── INSTRUMENT HEADER ── */
+  .inst-header {
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .inst-header::after {
+    content: attr(data-abbr);
+    position: absolute;
+    right: 1.5rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    opacity: .12;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .ih-nist { background: var(--nist); }
+  .ih-iso  { background: var(--iso); }
+  .ih-eu   { background: var(--eu); }
+  .ih-comp { background: var(--purple); }
+  .inst-header .label {
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    opacity: .7; margin-bottom: .4rem; font-weight: 500;
+  }
+  .inst-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400; line-height: 1.2;
+    margin-bottom: .4rem;
+  }
+  .inst-header p { font-size: 13px; opacity: .75; max-width: 520px; }
+
+  /* ── FACT TABLE ── */
+  .fact-table {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .fact-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border-bottom: 1px solid var(--border-2);
+  }
+  .fact-row:last-child { border-bottom: none; }
+  .fact-key {
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-3);
+    background: var(--surface-2);
+    letter-spacing: .02em;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 16px;
+    line-height: 1.4;
+  }
+  .fact-val {
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.65;
+  }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 2px 3px 2px 0;
+    letter-spacing: .02em;
+  }
+  .b-nist { background: var(--nist-light); color: var(--nist); }
+  .b-iso  { background: var(--iso-light);  color: var(--iso); }
+  .b-eu   { background: var(--eu-light);   color: var(--eu); }
+  .b-gray { background: var(--surface-2);  color: var(--ink-2); border: 1px solid var(--border); }
+  .b-warn { background: #FEF3C7; color: #78350F; }
+  .b-danger { background: #FEE2E2; color: #7F1D1D; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin: 2rem 0 .75rem;
+  }
+
+  /* ── FUNCTION CARDS ── */
+  .funcs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 560px) { .funcs { grid-template-columns: 1fr; } }
+  .func-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    transition: box-shadow .15s;
+  }
+  .func-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+  .func-card .fc-icon { font-size: 20px; margin-bottom: .5rem; }
+  .func-card h4 { font-size: 13px; font-weight: 600; margin-bottom: .3rem; }
+  .func-card p { font-size: 12px; color: var(--ink-2); line-height: 1.55; }
+
+  /* ── RISK TIERS ── */
+  .tier {
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    margin-bottom: 10px;
+    border-left: 4px solid transparent;
+  }
+  .t-red    { background: #FEF2F2; border-color: #EF4444; }
+  .t-orange { background: #FFF7ED; border-color: #F97316; }
+  .t-blue   { background: #EFF6FF; border-color: #3B82F6; }
+  .t-green  { background: #F0FDF4; border-color: #22C55E; }
+  .tier h4 { font-size: 13px; font-weight: 600; margin-bottom: .3rem; }
+  .tier p  { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+  .t-red h4    { color: #7F1D1D; }
+  .t-orange h4 { color: #7C2D12; }
+  .t-blue h4   { color: #1E3A5F; }
+  .t-green h4  { color: #14532D; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 28px; margin: .5rem 0; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 8px; top: 8px; bottom: 8px;
+    width: 2px; background: var(--border);
+    border-radius: 2px;
+  }
+  .t-item { position: relative; margin-bottom: 14px; }
+  .t-item:last-child { margin-bottom: 0; }
+  .t-dot {
+    position: absolute; left: -24px; top: 4px;
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .t-date { font-size: 11px; font-weight: 600; color: var(--ink-3); margin-bottom: 2px; letter-spacing: .03em; }
+  .t-desc { font-size: 13px; color: var(--ink); }
+  .t-desc strong { font-weight: 600; }
+
+  /* ── COMPARE TABLE ── */
+  .compare-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-width: 560px;
+  }
+  .compare-table thead th {
+    padding: 12px 16px;
+    font-size: 12px; font-weight: 600;
+    text-align: left; color: #fff;
+    border-right: 1px solid rgba(255,255,255,.15);
+  }
+  .compare-table thead th:first-child { background: var(--surface-2); color: var(--ink-3); border-right: 1px solid var(--border); }
+  .th-nist { background: var(--nist); }
+  .th-iso  { background: var(--iso); }
+  .th-eu   { background: var(--eu); }
+  .compare-table tbody tr { border-bottom: 1px solid var(--border-2); }
+  .compare-table tbody tr:last-child { border-bottom: none; }
+  .compare-table tbody tr:hover td { background: var(--surface-2); }
+  .compare-table td {
+    padding: 11px 16px;
+    font-size: 13px;
+    color: var(--ink);
+    vertical-align: top;
+    border-right: 1px solid var(--border-2);
+    line-height: 1.5;
+  }
+  .compare-table td:last-child { border-right: none; }
+  .compare-table td.row-label {
+    font-size: 11px; font-weight: 600; color: var(--ink-3);
+    background: var(--surface-2);
+    white-space: nowrap;
+    border-right: 1px solid var(--border);
+    letter-spacing: .02em;
+  }
+  .compare-table tr.section-sep td {
+    background: var(--ink); color: rgba(255,255,255,.7);
+    font-size: 10px; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; padding: 6px 16px;
+  }
+  .yes { color: #15803D; font-weight: 600; }
+  .no  { color: #B91C1C; font-weight: 600; }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    background: var(--purple-light);
+    border: 1px solid #CECBF6;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.75rem;
+    margin-top: 1.5rem;
+  }
+  .summary-box h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; font-weight: 400;
+    color: var(--purple);
+    margin-bottom: .75rem;
+  }
+  .summary-box p { font-size: 14px; color: var(--ink-2); line-height: 1.7; }
+  .summary-box p + p { margin-top: .75rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--ink-4);
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .nav, .hero-pills { display: none; }
+    .panel { display: block !important; page-break-before: always; }
+    .panel:first-of-type { page-break-before: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Marcos Regulatorios<br><em>de Inteligencia Artificial</em></h1>
+  <p class="hero-sub">NIST AI RMF · ISO/IEC 42001 · AI Act UE</p>
+  <div class="hero-pills">
+    <button class="hero-pill hp-nist" onclick="switchTab('nist')">NIST AI RMF 1.0</button>
+    <button class="hero-pill hp-iso"  onclick="switchTab('iso')">ISO/IEC 42001</button>
+    <button class="hero-pill hp-eu"   onclick="switchTab('eu')">AI Act UE 2024/1689</button>
+    <button class="hero-pill" style="background:var(--purple);color:#fff;" onclick="switchTab('comp')">Comparativa</button>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" data-tab="nist" onclick="switchTab('nist')">NIST AI RMF</button>
+  <button class="nav-btn" data-tab="iso"  onclick="switchTab('iso')">ISO/IEC 42001</button>
+  <button class="nav-btn" data-tab="eu"   onclick="switchTab('eu')">AI Act UE</button>
+  <button class="nav-btn" data-tab="comp" onclick="switchTab('comp')">Cuadro comparativo</button>
+</nav>
+
+<!-- ══════════════ NIST ══════════════ -->
+<div id="panel-nist" class="panel active">
+
+  <div class="inst-header ih-nist" data-abbr="NIST">
+    <div class="label">Marco de referencia · EE.UU. · 2023</div>
+    <h2>NIST AI Risk Management Framework</h2>
+    <p>AI RMF 1.0 — National Institute of Standards and Technology, Departamento de Comercio</p>
+  </div>
+
+  <div class="fact-table">
+    <div class="fact-row">
+      <div class="fact-key">Naturaleza</div>
+      <div class="fact-val">
+        <span class="badge b-nist">Marco voluntario</span>
+        <span class="badge b-gray">No vinculante</span>
+        <span class="badge b-gray">Sin certificación formal</span>
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Origen</div>
+      <div class="fact-val">EE.UU. — NIST / Departamento de Comercio. Publicado en enero 2023. Mandatado por la <em>National AI Initiative Act de 2020</em>.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Objeto</div>
+      <div class="fact-val">Ayudar a organizaciones que diseñan, desarrollan, despliegan o usan sistemas de IA a <strong>identificar, medir y gestionar sus riesgos</strong>, promoviendo el desarrollo responsable y confiable de la IA. No prohíbe ni exige: orienta y estructura la gestión del riesgo.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">¿A quién aplica?</div>
+      <div class="fact-val">A todos los <em>actores de IA</em> (AI actors): diseñadores, desarrolladores, desplegadores, operadores, evaluadores, auditores, usuarios finales y comunidades afectadas. Cualquier organización, cualquier sector, cualquier tamaño.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Ámbito territorial</div>
+      <div class="fact-val">Originado en EE.UU. pero diseñado para referencia global. Compatible con estándares ISO y marcos de la OCDE. Sin efecto jurídico extraterritorial.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Vigencia</div>
+      <div class="fact-val">Publicado enero 2023. Es un <em>documento vivo</em>: revisión formal prevista no más tarde de 2028. Sistema de versiones: 1.0 actual; revisiones menores como 1.1, 1.2, etc.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Sanciones</div>
+      <div class="fact-val"><span class="badge b-gray">No prevé sanciones.</span> El incumplimiento no genera consecuencias jurídicas directas por el solo hecho de no seguir el framework.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Sistema de IA (definición)</div>
+      <div class="fact-val">Sistema de ingeniería o basado en máquina que, para un conjunto de objetivos dados, genera outputs como predicciones, recomendaciones o decisiones que influyen en entornos reales o virtuales. Opera con distintos niveles de autonomía.</div>
+    </div>
+  </div>
+
+  <p class="section-title">Las 7 características de la IA confiable (Trustworthy AI)</p>
+  <div class="fact-table">
+    <div class="fact-row"><div class="fact-key">Válida y confiable</div><div class="fact-val">Opera correctamente bajo condiciones previstas, con resultados precisos y generalizables. Base de todas las demás características.</div></div>
+    <div class="fact-row"><div class="fact-key">Segura (Safe)</div><div class="fact-val">No pone en riesgo la vida, salud, propiedad o medio ambiente bajo condiciones definidas.</div></div>
+    <div class="fact-row"><div class="fact-key">Segura y resiliente</div><div class="fact-val">Resiste ataques (envenenamiento de datos, evasión) y se recupera de eventos adversos. Confidencialidad, integridad y disponibilidad.</div></div>
+    <div class="fact-row"><div class="fact-key">Responsable y transparente</div><div class="fact-val">Se puede saber qué pasó, quién decidió y cómo. Permite rendición de cuentas y redress. La transparencia presupone la responsabilidad.</div></div>
+    <div class="fact-row"><div class="fact-key">Explicable e interpretable</div><div class="fact-val">Se puede entender <em>cómo</em> (explainability) y <em>por qué</em> (interpretability) tomó una decisión el sistema.</div></div>
+    <div class="fact-row"><div class="fact-key">Privacidad mejorada</div><div class="fact-val">Protege la autonomía, identidad y dignidad de las personas. Principios de minimización de datos y diseño orientado a la privacidad.</div></div>
+    <div class="fact-row"><div class="fact-key">Justa, sesgo gestionado</div><div class="fact-val">Aborda sesgos sistémicos, computacionales/estadísticos y cognitivos humanos. Previene discriminación e inequidad.</div></div>
+  </div>
+
+  <p class="section-title">Las 4 funciones del núcleo (Core)</p>
+  <div class="funcs">
+    <div class="func-card">
+      <div class="fc-icon">🏛</div>
+      <h4>GOVERN — Gobernar</h4>
+      <p>Cultiva la cultura organizacional y las estructuras de gestión de riesgos. Es la función transversal que sostiene y atraviesa a todas las demás. Incluye políticas, roles, formación, liderazgo ejecutivo y gestión de terceros.</p>
+    </div>
+    <div class="func-card">
+      <div class="fc-icon">🗺</div>
+      <h4>MAP — Mapear</h4>
+      <p>Establece el contexto del sistema de IA e identifica los riesgos relevantes. Define propósito, actores, supuestos e impactos. Culmina en una decisión inicial de go/no-go sobre si proceder con el sistema.</p>
+    </div>
+    <div class="func-card">
+      <div class="fc-icon">📏</div>
+      <h4>MEASURE — Medir</h4>
+      <p>Aplica métodos cuantitativos, cualitativos o mixtos para analizar, evaluar y monitorear los riesgos identificados en MAP. Incluye pruebas antes del despliegue y monitoreo continuo en operación.</p>
+    </div>
+    <div class="func-card">
+      <div class="fc-icon">⚙️</div>
+      <h4>MANAGE — Gestionar</h4>
+      <p>Actúa sobre los riesgos mapeados y medidos: prioriza, responde, recupera, monitorea y comunica. Define planes de respuesta a incidentes y promueve mejora continua.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ISO ══════════════ -->
+<div id="panel-iso" class="panel">
+
+  <div class="inst-header ih-iso" data-abbr="ISO">
+    <div class="label">Norma internacional · Global · ISO/IEC JTC 1 / SC 42</div>
+    <h2>ISO/IEC 42001 — Sistema de Gestión de IA</h2>
+    <p>Requisitos para establecer, implementar, mantener y mejorar un AI Management System (AIMS)</p>
+  </div>
+
+  <div class="fact-table">
+    <div class="fact-row">
+      <div class="fact-key">Naturaleza</div>
+      <div class="fact-val">
+        <span class="badge b-iso">Norma internacional</span>
+        <span class="badge b-iso">Certificable (3ra parte)</span>
+        <span class="badge b-gray">Voluntaria (salvo incorporación contractual o legal)</span>
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Origen</div>
+      <div class="fact-val">ISO e IEC conjuntamente. Subcomité SC 42 (<em>Artificial Intelligence</em>). Usa la <strong>estructura armonizada ISO</strong> (mismos números de cláusula que ISO 9001, ISO 27001, etc.), lo que facilita integración con sistemas de gestión existentes.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Objeto</div>
+      <div class="fact-val">Especifica los <strong>requisitos para establecer, implementar, mantener y mejorar continuamente un Sistema de Gestión de IA (SGAI)</strong>. No regula tecnología: regula cómo debe organizarse una empresa para gestionar la IA responsablemente.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">¿A quién aplica?</div>
+      <div class="fact-val">Cualquier organización —sin importar tamaño, tipo o naturaleza— que <strong>provea o use</strong> productos o servicios que utilicen sistemas de IA. Abarca tanto desarrolladores de IA como usuarios empresariales de herramientas basadas en IA.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Ámbito territorial</div>
+      <div class="fact-val">Global. Aplicable en cualquier país. Su adopción puede derivar de: (a) decisión voluntaria, (b) exigencia contractual de clientes, (c) requerimiento regulatorio que la incorpore por referencia.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Vigencia</div>
+      <div class="fact-val">Vigente desde su publicación. Ciclos de revisión normales de ISO/IEC. Sin fecha de caducidad predefinida.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Sanciones</div>
+      <div class="fact-val"><span class="badge b-gray">No prevé sanciones propias.</span> La consecuencia de incumplimiento es la pérdida o denegación de la certificación, con los efectos contractuales y reputacionales que ello implique.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Declaración de Aplicabilidad</div>
+      <div class="fact-val">Documento clave: la organización debe documentar qué controles del Anexo A aplica, cuáles excluye y por qué. Genera trazabilidad y es la base de las auditorías de certificación.</div>
+    </div>
+  </div>
+
+  <p class="section-title">Tres razones que justifican una norma específica para la IA</p>
+  <div class="tier t-orange">
+    <h4>Decisiones automáticas no transparentes</h4>
+    <p>La IA puede tomar decisiones de modo no explicable, lo que exige una gestión que va más allá de los sistemas de TI clásicos.</p>
+  </div>
+  <div class="tier t-blue">
+    <h4>Aprendizaje en lugar de lógica codificada por humanos</h4>
+    <p>Los sistemas de IA se desarrollan, justifican y despliegan de manera fundamentalmente diferente al software tradicional, cambiando cómo deben gestionarse.</p>
+  </div>
+  <div class="tier t-green">
+    <h4>Aprendizaje continuo durante el uso</h4>
+    <p>Los sistemas que aprenden continuamente modifican su comportamiento durante la operación. Requieren salvaguardas especiales para que el uso responsable se mantenga con el cambio de comportamiento.</p>
+  </div>
+</div>
+
+<!-- ══════════════ EU ══════════════ -->
+<div id="panel-eu" class="panel">
+
+  <div class="inst-header ih-eu" data-abbr="UE">
+    <div class="label">Ley vinculante · Unión Europea · Reglamento 2024/1689</div>
+    <h2>AI Act — Reglamento (UE) 2024/1689</h2>
+    <p>Primera ley de IA vinculante y comprehensiva del mundo. Aplicación directa en los 27 Estados miembros.</p>
+  </div>
+
+  <div class="fact-table">
+    <div class="fact-row">
+      <div class="fact-key">Naturaleza</div>
+      <div class="fact-val">
+        <span class="badge b-eu">Ley vinculante</span>
+        <span class="badge b-eu">Reglamento UE</span>
+        <span class="badge b-eu">Aplicación directa</span>
+        <span class="badge b-gray">Sin transposición nacional</span>
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Objeto</div>
+      <div class="fact-val">Armonizar reglas en la UE sobre: (1) introducción de IA en el mercado; (2) prohibición de ciertas prácticas; (3) requisitos para sistemas de alto riesgo; (4) transparencia; (5) modelos de uso general; (6) vigilancia, gobernanza y sanciones; (7) apoyo a innovación, pymes y startups.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">¿A quién aplica?</div>
+      <div class="fact-val">
+        <strong>Alcance extraterritorial.</strong> Aplica a: proveedores, responsables del despliegue, importadores, distribuidores, fabricantes y personas afectadas en la UE. También a actores <em>fuera de la UE</em> cuando los resultados del sistema se usen en territorio europeo.
+        <br><br>
+        <span class="badge b-gray">Excluye:</span> seguridad nacional · fines exclusivamente militares o de defensa · I+D previo a comercialización · uso personal no profesional · código abierto (con excepciones).
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Definición de IA</div>
+      <div class="fact-val">Sistema basado en máquina, diseñado para operar con distintos niveles de autonomía, que puede inferir —a partir de información de entrada— resultados como predicciones, contenidos, recomendaciones o decisiones que influyen en entornos físicos o virtuales.</div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Figuras clave</div>
+      <div class="fact-val">
+        <strong>Proveedor:</strong> desarrolla el sistema y lo introduce en el mercado bajo su nombre o marca.<br>
+        <strong>Responsable del despliegue:</strong> usa el sistema bajo su propia autoridad.<br>
+        <strong>Operador:</strong> categoría amplia que incluye proveedores, fabricantes, responsables del despliegue, representantes, importadores y distribuidores.
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Vigencia escalonada</div>
+      <div class="fact-val">
+        <div class="timeline">
+          <div class="t-item">
+            <div class="t-dot" style="background:var(--nist)"></div>
+            <div class="t-date">2 FEB 2025 — Ya vigente</div>
+            <div class="t-desc">Disposiciones generales y definiciones (Capítulos I y II)</div>
+          </div>
+          <div class="t-item">
+            <div class="t-dot" style="background:var(--iso)"></div>
+            <div class="t-date">2 AGO 2025</div>
+            <div class="t-desc">Modelos de IA de uso general, gobernanza, sanciones y art. 78</div>
+          </div>
+          <div class="t-item">
+            <div class="t-dot" style="background:var(--eu)"></div>
+            <div class="t-date">2 AGO 2026 — Regla general</div>
+            <div class="t-desc"><strong>La mayor parte del Reglamento entra en vigor.</strong> Obligaciones de alto riesgo, transparencia, vigilancia del mercado.</div>
+          </div>
+          <div class="t-item">
+            <div class="t-dot" style="background:#7C2D12"></div>
+            <div class="t-date">2 AGO 2027</div>
+            <div class="t-desc">Art. 6.1 (sistemas de alto riesgo vinculados a productos). Plazo para que proveedores de modelos preexistentes adapten su cumplimiento.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fact-row">
+      <div class="fact-key">Sanciones (art. 99)</div>
+      <div class="fact-val">
+        <div class="tier t-red" style="margin-bottom:8px">
+          <h4>Prácticas prohibidas (art. 5)</h4>
+          <p>Hasta <strong>35 millones de euros</strong> o <strong>7%</strong> del volumen de negocios mundial anual — lo que sea mayor.</p>
+        </div>
+        <div class="tier t-orange" style="margin-bottom:8px">
+          <h4>Incumplimientos de obligaciones de operadores y organismos notificados</h4>
+          <p>Hasta <strong>15 millones de euros</strong> o <strong>3%</strong> del volumen de negocios mundial anual.</p>
+        </div>
+        <div class="tier t-blue">
+          <h4>Información inexacta, incompleta o engañosa a autoridades</h4>
+          <p>Hasta <strong>7,5 millones de euros</strong> o <strong>1%</strong> del volumen de negocios mundial anual.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-title">Los 4 niveles de riesgo — corazón del reglamento</p>
+
+  <div class="tier t-red">
+    <h4>🔴 Nivel 1 — Riesgo inaceptable: PROHIBIDO (art. 5)</h4>
+    <p>Prácticas incompatibles con los valores y derechos fundamentales de la UE. Incluye: manipulación subliminal o engañosa · explotación de vulnerabilidades · social scoring · predicción de criminalidad por perfilado · bases de datos faciales por scraping masivo · reconocimiento de emociones en trabajo o educación (salvo excepciones) · categorización biométrica de características sensibles · identificación biométrica remota en tiempo real en espacios públicos con fines policiales (salvo supuestos excepcionales con garantías estrictas).</p>
+  </div>
+  <div class="tier t-orange" style="margin-top:8px">
+    <h4>🟠 Nivel 2 — Alto riesgo: PERMITIDO con obligaciones estrictas (arts. 6–51)</h4>
+    <p>No están prohibidos, pero exigen cumplimiento riguroso. Categorías: biometría · infraestructura crítica · educación · empleo · servicios esenciales (crédito, seguros, salud) · law enforcement · migración y fronteras · justicia y procesos democráticos. Obligaciones: sistema de gestión de riesgos · gobernanza de datos · documentación técnica · logging · transparencia · supervisión humana · evaluación de conformidad · marcado CE · declaración UE de conformidad.</p>
+  </div>
+  <div class="tier t-blue" style="margin-top:8px">
+    <h4>🟡 Nivel 3 — Riesgo limitado: TRANSPARENCIA obligatoria (art. 50)</h4>
+    <p>Las personas deben saber que interactúan con IA o con contenido generado artificialmente. Aplica a: chatbots · deepfakes · contenido sintético (audio, imagen, video, texto) · reconocimiento de emociones · categorización biométrica.</p>
+  </div>
+  <div class="tier t-green" style="margin-top:8px">
+    <h4>🟢 Nivel 4 — Riesgo mínimo: sin obligaciones estrictas</h4>
+    <p>Usos ordinarios y de bajo riesgo. La norma puede incentivar códigos de conducta voluntarios y buenas prácticas.</p>
+  </div>
+
+  <p class="section-title">Obligaciones principales para sistemas de alto riesgo (arts. 8–15, 16, 25, 26)</p>
+  <div class="fact-table">
+    <div class="fact-row"><div class="fact-key">Proveedores (art. 16)</div><div class="fact-val">Garantizar cumplimiento legal · sistema de gestión de calidad · documentación técnica · evaluación de conformidad · declaración UE de conformidad · marcado CE · registro · medidas correctoras · demostrar conformidad ante autoridades.</div></div>
+    <div class="fact-row"><div class="fact-key">Responsables del despliegue (art. 26)</div><div class="fact-val">Usar el sistema según instrucciones del proveedor · supervisión humana competente · datos de entrada pertinentes · monitoreo del funcionamiento · informar incidentes · suspender el uso si corresponde · conservar registros al menos 6 meses · informar a trabajadores si se usa en el lugar de trabajo.</div></div>
+    <div class="fact-row"><div class="fact-key">Evaluación de impacto en DDHH</div><div class="fact-val">Ciertos responsables del despliegue deben realizarla antes de usar determinados sistemas de alto riesgo. Debe identificar: procesos afectados · personas impactadas · riesgos concretos · medidas de supervisión humana · mecanismos de mitigación o reclamación.</div></div>
+    <div class="fact-row"><div class="fact-key">Responsabilidad en cadena (art. 25)</div><div class="fact-val">Distribuidores, importadores y responsables del despliegue pueden convertirse en <strong>"proveedores"</strong> (con todas sus obligaciones) si: colocan su nombre en un sistema de otro · lo modifican sustancialmente · cambian su finalidad prevista a alto riesgo.</div></div>
+    <div class="fact-row"><div class="fact-key">Supervisión humana</div><div class="fact-val">No es opcional. Los sistemas de alto riesgo deben diseñarse estructuralmente para que una persona física pueda comprenderlos, monitorizarlos e intervenir para prevenir o reducir riesgos para la salud, seguridad y derechos fundamentales.</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ COMPARATIVA ══════════════ -->
+<div id="panel-comp" class="panel">
+
+  <div class="inst-header ih-comp" data-abbr="VS">
+    <div class="label">Análisis comparativo · Los tres instrumentos</div>
+    <h2>Cuadro comparativo</h2>
+    <p>NIST AI RMF · ISO/IEC 42001 · Reglamento (UE) 2024/1689 AI Act</p>
+  </div>
+
+  <div class="compare-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="background:var(--surface-2);color:var(--ink-3);border-right:1px solid var(--border);">Aspecto</th>
+          <th class="th-nist">NIST AI RMF</th>
+          <th class="th-iso">ISO/IEC 42001</th>
+          <th class="th-eu">AI Act UE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="section-sep"><td colspan="4">Naturaleza y obligatoriedad</td></tr>
+        <tr>
+          <td class="row-label">Tipo de instrumento</td>
+          <td>Marco de referencia voluntario</td>
+          <td>Norma técnica internacional</td>
+          <td>Ley vinculante (Reglamento UE)</td>
+        </tr>
+        <tr>
+          <td class="row-label">Obligatoriedad</td>
+          <td><span class="no">No</span> — voluntario</td>
+          <td><span class="no">No</span> — salvo contrato o ley</td>
+          <td><span class="yes">Sí</span> — directamente aplicable</td>
+        </tr>
+        <tr>
+          <td class="row-label">Certificación</td>
+          <td><span class="no">No</span> prevé</td>
+          <td><span class="yes">Sí</span> — auditoría de 3ra parte</td>
+          <td><span class="yes">Sí</span> — evaluación de conformidad + CE</td>
+        </tr>
+
+        <tr class="section-sep"><td colspan="4">Origen y alcance territorial</td></tr>
+        <tr>
+          <td class="row-label">Origen</td>
+          <td>EE.UU. (NIST)</td>
+          <td>Internacional (ISO/IEC)</td>
+          <td>Unión Europea</td>
+        </tr>
+        <tr>
+          <td class="row-label">Alcance territorial</td>
+          <td>EE.UU., referencia global sin fuerza de ley</td>
+          <td>Global — cualquier país</td>
+          <td>UE + <strong>efecto extraterritorial</strong> si se usa en Europa</td>
+        </tr>
+
+        <tr class="section-sep"><td colspan="4">Foco y estructura</td></tr>
+        <tr>
+          <td class="row-label">Foco principal</td>
+          <td>Gestión del riesgo a lo largo del ciclo de vida</td>
+          <td>Sistema de gestión organizacional integral</td>
+          <td>Regulación del mercado y derechos fundamentales</td>
+        </tr>
+        <tr>
+          <td class="row-label">Estructura central</td>
+          <td>4 funciones: Govern · Map · Measure · Manage</td>
+          <td>Cláusulas armonizadas ISO (10 cláusulas)</td>
+          <td>Pirámide de 4 niveles de riesgo</td>
+        </tr>
+        <tr>
+          <td class="row-label">Prohibiciones explícitas</td>
+          <td><span class="no">No</span></td>
+          <td><span class="no">No</span></td>
+          <td><span class="yes">Sí</span> — art. 5 (prácticas prohibidas)</td>
+        </tr>
+
+        <tr class="section-sep"><td colspan="4">Sanciones y consecuencias</td></tr>
+        <tr>
+          <td class="row-label">Sanciones</td>
+          <td><span class="no">Ninguna</span></td>
+          <td>Pérdida de certificación</td>
+          <td>Hasta <strong>35 M€ o 7%</strong> volumen global</td>
+        </tr>
+
+        <tr class="section-sep"><td colspan="4">Vigencia y actualización</td></tr>
+        <tr>
+          <td class="row-label">Vigencia actual</td>
+          <td>Enero 2023. Revisión ≤ 2028.</td>
+          <td>Vigente. Ciclos ISO.</td>
+          <td>Aplicación escalonada 2025–2027</td>
+        </tr>
+        <tr>
+          <td class="row-label">Documento vivo</td>
+          <td><span class="yes">Sí</span> — versionado</td>
+          <td><span class="yes">Sí</span> — ciclos ISO</td>
+          <td><span class="yes">Sí</span> — revisión periódica obligatoria</td>
+        </tr>
+
+        <tr class="section-sep"><td colspan="4">Compatibilidad e integración</td></tr>
+        <tr>
+          <td class="row-label">Compatibilidad mencionada</td>
+          <td>Estándares internacionales (ISO) y marcos de la OCDE</td>
+          <td>Otras normas ISO mediante estructura armonizada</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="row-label">Relación entre los tres</td>
+          <td colspan="3" style="font-size:13px; line-height:1.6">El AI Act es la única norma vinculante con sanciones. La ISO/IEC 42001 es certificable. El NIST AI RMF es un marco voluntario. Difieren en naturaleza, alcance y estructura según se detalla arriba.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary-box">
+    <h3>Diferencias esenciales entre los tres instrumentos</h3>
+    <p>El <strong>NIST AI RMF</strong> es un marco de referencia voluntario, sin sanciones ni certificación, orientado a la gestión del riesgo a través de cuatro funciones (Govern, Map, Measure, Manage).</p>
+    <p>La <strong>ISO/IEC 42001</strong> es una norma internacional certificable por tercera parte, que especifica los requisitos de un Sistema de Gestión de IA y se integra con otras normas ISO mediante una estructura armonizada.</p>
+    <p>El <strong>AI Act (Reglamento UE 2024/1689)</strong> es la única de las tres que constituye ley vinculante: aplica directamente en la UE, tiene alcance extraterritorial, prohíbe expresamente ciertas prácticas y prevé sanciones de hasta 35 millones de euros o el 7% del volumen de negocios mundial anual.</p>
+  </div>
+</div>
+
+<footer>
+  <p>Basada en NIST AI 100-1 (2023), ISO/IEC 42001 y Reglamento (UE) 2024/1689</p>
+</footer>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  const btn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: document.querySelector('.nav').offsetTop - 10, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
